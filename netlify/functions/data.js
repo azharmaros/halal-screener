@@ -11,23 +11,21 @@ exports.handler = async () => {
     const projectId = process.env.FIREBASE_PROJECT_ID;
     const apiKey    = process.env.FIREBASE_API_KEY;
 
-    // Ambil dokumen "stocks/latest" dari Firestore REST API
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/stocks/latest?key=${apiKey}`;
     const res  = await fetch(url);
 
     if (res.status === 404) {
-      return { statusCode: 200, headers, body: JSON.stringify({ stocks: [], updatedAt: null }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ stocks: [], updatedAt: null, statTV:0, statHalal:0, statXTB:0 }) };
     }
     if (!res.ok) {
       const err = await res.text();
       throw new Error(`Firestore error ${res.status}: ${err}`);
     }
 
-    const doc  = await res.json();
-    const raw  = doc.fields;
+    const doc = await res.json();
+    const raw = doc.fields;
 
-    // Firestore menyimpan array sebagai arrayValue
-    const stocks    = (raw.stocks?.arrayValue?.values || []).map(v => {
+    const stocks = (raw.stocks?.arrayValue?.values || []).map(v => {
       const f = v.mapValue.fields;
       return {
         ticker: f.ticker?.stringValue || '',
@@ -39,9 +37,18 @@ exports.handler = async () => {
         sector: f.sector?.stringValue || '',
       };
     });
-    const updatedAt = raw.updatedAt?.stringValue || null;
 
-    return { statusCode: 200, headers, body: JSON.stringify({ stocks, updatedAt }) };
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify({
+        stocks,
+        updatedAt:  raw.updatedAt?.stringValue  || null,
+        statTV:     Number(raw.statTV?.integerValue    || stocks.length),
+        statHalal:  Number(raw.statHalal?.integerValue || stocks.length),
+        statXTB:    Number(raw.statXTB?.integerValue   || stocks.length),
+      }),
+    };
 
   } catch (err) {
     console.error('GET /api/data error:', err);
