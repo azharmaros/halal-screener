@@ -8,16 +8,13 @@ exports.handler = async (event) => {
     'Content-Type': 'application/json',
   };
 
-  // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers, body: '' };
   }
-
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
-  // Cek secret key
   const secret = event.headers['x-upload-secret'] || '';
   if (!secret || secret !== process.env.UPLOAD_SECRET) {
     return { statusCode: 401, headers, body: JSON.stringify({ error: 'Unauthorized: secret key salah' }) };
@@ -30,16 +27,15 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Body bukan JSON valid' }) };
   }
 
-  const { stocks } = body;
+  const { stocks, statTV, statHalal, statXTB } = body;
   if (!Array.isArray(stocks) || stocks.length === 0) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Field stocks kosong atau bukan array' }) };
   }
 
   try {
-    const projectId  = process.env.FIREBASE_PROJECT_ID;
-    const apiKey     = process.env.FIREBASE_API_KEY;
+    const projectId = process.env.FIREBASE_PROJECT_ID;
+    const apiKey    = process.env.FIREBASE_API_KEY;
 
-    // Konversi array saham ke format Firestore
     const firestoreStocks = {
       arrayValue: {
         values: stocks.map(s => ({
@@ -63,12 +59,14 @@ exports.handler = async (event) => {
         stocks:    firestoreStocks,
         updatedAt: { stringValue: new Date().toISOString() },
         count:     { integerValue: String(stocks.length) },
+        statTV:    { integerValue: String(statTV    || 0) },
+        statHalal: { integerValue: String(statHalal || 0) },
+        statXTB:   { integerValue: String(statXTB   || 0) },
       }
     };
 
-    // Tulis ke dokumen stocks/latest (PATCH = upsert)
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/stocks/latest?key=${apiKey}`;
-    const res  = await fetch(url, {
+    const res = await fetch(url, {
       method:  'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify(doc),
