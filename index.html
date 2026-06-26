@@ -389,6 +389,8 @@ async function init() {
     } else {
       showStatus('ok', `${allStocks.length} saham dimuat` + (updatedAt ? ` · Diperbarui ${updatedAt}` : ''));
       document.getElementById('last-run').textContent = updatedAt ? 'Update: ' + updatedAt : '';
+      // Simpan stats dari DB untuk ditampilkan
+      window._dbStats = { statTV: json.statTV||0, statHalal: json.statHalal||0, statXTB: json.statXTB||0 };
       buildStats();
       renderTable();
     }
@@ -411,9 +413,10 @@ function showStatus(type, msg) {
 function buildStats() {
   const minScore = parseInt(document.getElementById('f-rating').value) || 1;
   const filtered = allStocks.filter(r => r.score >= minScore);
-  document.getElementById('st-tv').textContent    = allStocks.length;
-  document.getElementById('st-halal').textContent = allStocks.length;
-  document.getElementById('st-xtb').textContent   = allStocks.length;
+  const s = window._dbStats || {};
+  document.getElementById('st-tv').textContent    = s.statTV    || allStocks.length;
+  document.getElementById('st-halal').textContent = s.statHalal || allStocks.length;
+  document.getElementById('st-xtb').textContent   = s.statXTB   || allStocks.length;
   document.getElementById('st-final').textContent = filtered.length;
   document.getElementById('stats-grid').style.display = 'grid';
 }
@@ -438,6 +441,8 @@ function renderTable() {
   rows.sort((a,b) => {
     if (sortCol === 'score')  return (a.score  - b.score)  * sortDir;
     if (sortCol === 'ticker') return a.ticker.localeCompare(b.ticker) * sortDir;
+    if (sortCol === 'name')   return (a.name||'').localeCompare(b.name||'') * sortDir;
+    if (sortCol === 'sector') return (a.sector||'').localeCompare(b.sector||'') * sortDir;
     if (sortCol === 'price')  { const av=isNaN(a.price)?-1:a.price, bv=isNaN(b.price)?-1:b.price; return (av-bv)*sortDir; }
     if (sortCol === 'signal') {
       const order = {'Strong buy':4,'Buy':3,'Neutral':2,'Sell':1,'Strong sell':0};
@@ -477,11 +482,11 @@ function renderTable() {
         <table>
           <thead><tr>
             ${th('ticker','Ticker')}
-            <th>Nama</th>
+            ${th('name','Nama')}
             ${th('score','Rating')}
             ${th('price','Price')}
             ${th('signal','TV Signal')}
-            <th>Sektor</th>
+            ${th('sector','Sektor')}
           </tr></thead>
           <tbody>
             ${rows.map(r=>`<tr>
@@ -501,7 +506,7 @@ function renderTable() {
 
 function setSort(col) {
   if (sortCol===col) sortDir*=-1;
-  else { sortCol=col; sortDir=(col==='score'||col==='signal')?-1:1; }
+  else { sortCol=col; sortDir=(col==='score'||col==='signal') ? -1 : 1; }
   renderTable();
 }
 
@@ -621,6 +626,19 @@ async function saveData() {
       });
     });
 
+    // Hitung stats sebelum filter merge
+    const statTV    = UPLOAD_DATA.tv.length;
+    const statHalal = Object.keys(muMap).filter(t => xtSet.has(t) ? false : muMap[t]).length
+                    + stocks.length; // aproximasi: semua di muMap yang match TV
+    // Hitung ulang dengan benar
+    let _stHalal = 0, _stXTB = 0;
+    UPLOAD_DATA.tv.forEach(r => {
+      const ticker = normTicker(r[C.tvTicker], false); if (!ticker) return;
+      const mu = muMap[ticker];
+      if (mu) _stHalal++;
+      if (mu && xtSet.has(ticker)) _stXTB++;
+    });
+
     if (!stocks.length) {
       alert('Tidak ada saham yang lolos filter setelah merge. Cek kolom CSV di console (F12).');
       btn.disabled = false; label.textContent = 'Simpan ke Database';
@@ -632,13 +650,14 @@ async function saveData() {
     const res  = await fetch('/api/upload', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-upload-secret': secret },
-      body: JSON.stringify({ stocks }),
+      body: JSON.stringify({ stocks, statTV, statHalal: _stHalal, statXTB: _stXTB }),
     });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || 'Upload gagal');
 
     // Reload data
     allStocks = stocks;
+    window._dbStats = { statTV, statHalal: _stHalal, statXTB: _stXTB };
     showStatus('ok', `${stocks.length} saham berhasil disimpan · ${new Date().toLocaleTimeString('id-ID')}`);
     buildStats();
     renderTable();
