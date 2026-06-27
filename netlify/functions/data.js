@@ -35,6 +35,9 @@ exports.handler = async () => {
         price:  Number(f.price?.doubleValue  || f.price?.integerValue || 0),
         signal: f.signal?.stringValue || '',
         sector: f.sector?.stringValue || '',
+        chg:    f.chg?.stringValue    || '',
+        tvUrl:  f.tvUrl?.stringValue  || '',
+        muUrl:  f.muUrl?.stringValue  || '',
       };
     });
 
