@@ -565,22 +565,35 @@ function pNum(v) {
 // Chg% — kembalikan angka float murni (bukan string dengan %)
 // XLSX kadang konversi "+1.24%" → 0.0124 (desimal), perlu dikali 100
 function extractChg(posRaw, negRaw) {
-  let raw = (posRaw !== null && posRaw !== undefined && posRaw !== '') ? posRaw : negRaw;
-  if (raw === null || raw === undefined || raw === '') return null;
+  // Ambil nilai yang tidak kosong — cek positif dulu, lalu negatif
+  let raw = null;
+  let isNeg = false;
+  if (posRaw !== null && posRaw !== undefined && posRaw !== '' && posRaw !== 0) {
+    raw = posRaw;
+  } else if (negRaw !== null && negRaw !== undefined && negRaw !== '') {
+    raw = negRaw;
+    isNeg = true;
+  } else if (posRaw === 0) {
+    return 0;
+  }
+  if (raw === null) return null;
 
   if (typeof raw === 'number') {
     // XLSX konversi persen → desimal: deteksi dari range -1..1
-    if (raw !== 0 && raw >= -1 && raw <= 1) return parseFloat((raw * 100).toFixed(4));
-    return raw;
+    const n = raw !== 0 && raw >= -1 && raw <= 1 ? parseFloat((raw * 100).toFixed(4)) : raw;
+    return isNeg ? -Math.abs(n) : n;
   }
 
-  // String: bersihkan encoding rusak dan unicode minus (−, –) → ASCII minus
-  let s = String(raw)
+  // String: bersihkan lalu parse — pertahankan tanda minus
+  const s = String(raw)
     .replace(/\u202f|\u00a0/g, '')
     .replace(/â€¯/g, '')
-    .replace(/\u2212|\u2013|\u2014/g, '-')  // unicode minus/en-dash/em-dash → -
-    .replace(/[^\d.+\-]/g, '');
-  const n = parseFloat(s);
+    .replace(/\u2212|\u2013|\u2014/g, '-');  // unicode minus → ASCII minus
+  // Ekstrak angka dengan tanda
+  const m = s.match(/([+\-]?\d+\.?\d*)/);
+  if (!m) return null;
+  let n = parseFloat(m[1]);
+  if (isNeg) n = -Math.abs(n);
   return isNaN(n) ? null : n;
 }
 
