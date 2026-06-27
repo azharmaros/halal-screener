@@ -462,9 +462,12 @@ function renderTable() {
   const fmtP   = v => (v===0||isNaN(v)) ? '—' : '$'+Number(v).toFixed(2);
   const fmtChg = v => {
     if (!v || v==='') return '<span style="color:var(--ink3)">—</span>';
-    const n = parseFloat(String(v).replace('%',''));
-    const cls = isNaN(n) ? '' : n > 0 ? 'color:var(--green)' : n < 0 ? 'color:#c0392b' : 'color:var(--ink2)';
-    return `<span style="${cls};font-variant-numeric:tabular-nums">${v}</span>`;
+    const clean = String(v).replace(/[^0-9.+\-]/g,'');
+    const n = parseFloat(clean);
+    if (isNaN(n)) return '<span style="color:var(--ink3)">—</span>';
+    const sign = n > 0 ? '+' : '';
+    const cls  = n > 0 ? 'color:var(--green)' : n < 0 ? 'color:#c0392b' : 'color:var(--ink2)';
+    return `<span style="${cls};font-variant-numeric:tabular-nums">${sign}${n.toFixed(2)}%</span>`;
   };
   const sigCls = s => {
     const sl = String(s||'').toLowerCase();
@@ -644,7 +647,18 @@ async function saveData() {
       const ticker = normTicker(r[C.tvTicker], false); if (!ticker) return;
       const price  = pNum(r[C.tvPrice]);
       const signal = String(r[C.tvSignal]||'');
-      const chg    = String(r[C.tvChgPos]||'').trim() || String(r[C.tvChgNeg]||'').trim() || '';
+      // Chg%: XLSX kadang konversi "+1.24%" jadi angka 0.0124, perlu dibalik
+      function extractChg(raw) {
+        if (raw === null || raw === undefined || raw === '') return '';
+        if (typeof raw === 'number') {
+          // XLSX konversi persen → desimal, kalikan 100 balik
+          return (raw * 100).toFixed(2) + '%';
+        }
+        // Perbaiki encoding rusak: karakter â atau − diganti -
+        return String(raw).replace(/^[^\d+\-.]*/,'').replace(/â|−|–/g,'-') || '';
+      }
+      const chgRaw = r[C.tvChgPos] || r[C.tvChgNeg] || '';
+      const chg = extractChg(chgRaw);
       const tvUrl  = tvUrlToSuperchart(r[C.tvUrl]);
       const mu     = muMap[ticker];
       if (!mu || !xtSet.has(ticker)) return;
