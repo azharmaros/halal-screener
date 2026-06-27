@@ -10,37 +10,18 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #f8f8f6;
-    --surf: #ffffff;
-    --surf2: #f3f3f0;
-    --surf3: #eaeae6;
-    --ink: #1a1a18;
-    --ink2: #6b6b65;
-    --ink3: #a8a8a0;
-    --bdr: rgba(0,0,0,0.08);
-    --bdr2: rgba(0,0,0,0.14);
-    --green: #1a9e6e;
-    --green-bg: #e8f7f1;
-    --green-dark: #0d6648;
-    --blue: #1a6fbf;
-    --blue-bg: #e8f0fb;
-    --purple: #5c4abf;
-    --purple-bg: #eeedfb;
-    --amber: #b87a10;
-    --amber-bg: #fdf3e0;
-    --red: #c0392b;
-    --red-bg: #fdecea;
-    --r-sm: 6px;
-    --r-md: 9px;
-    --r-lg: 13px;
+    --bg: #f8f8f6; --surf: #ffffff; --surf2: #f3f3f0; --surf3: #eaeae6;
+    --ink: #1a1a18; --ink2: #6b6b65; --ink3: #a8a8a0;
+    --bdr: rgba(0,0,0,0.08); --bdr2: rgba(0,0,0,0.14);
+    --green: #1a9e6e; --green-bg: #e8f7f1; --green-dark: #0d6648;
+    --red: #c0392b; --red-bg: #fdecea;
+    --r-sm: 6px; --r-md: 9px; --r-lg: 13px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-size: 15px;
-    color: var(--ink);
-    background: var(--bg);
+    font-size: 15px; color: var(--ink); background: var(--bg);
   }
 
   body { min-height: 100vh; }
-  .page { max-width: 1080px; margin: 0 auto; padding: 28px 20px 60px; }
+  .page { max-width: 1120px; margin: 0 auto; padding: 28px 20px 60px; }
 
   /* topbar */
   .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
@@ -78,16 +59,15 @@
   .upload-panel.open { display: block; }
   .upload-panel-title {
     font-size: 12px; font-weight: 600; color: var(--ink2);
-    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 16px;
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px;
   }
+  .upload-hint { font-size: 12px; color: var(--ink3); margin-bottom: 16px; }
   .upload-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
   .ucard { border: 1px solid var(--bdr); border-radius: var(--r-lg); padding: 14px; transition: border-color 0.2s; }
   .ucard.done { border-color: var(--green); }
   .ucard-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
   .src-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .dot-tv { background: #378ADD; }
-  .dot-mu { background: #7F77DD; }
-  .dot-xt { background: #E8960A; }
+  .dot-tv { background: #378ADD; } .dot-mu { background: #7F77DD; } .dot-xt { background: #E8960A; }
   .src-label { font-size: 11px; font-weight: 600; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.07em; }
   .tick { margin-left: auto; color: var(--green); font-size: 16px; display: none; }
   .ucard.done .tick { display: block; }
@@ -101,15 +81,13 @@
   .dz.loaded i { color: var(--green); }
   .dz.loaded .dz-label { color: var(--green); font-weight: 500; }
   .dz input { display: none; }
-
   .upload-bottom { display: flex; gap: 10px; align-items: flex-end; margin-top: 4px; }
   .secret-group { flex: 1; }
   .secret-group label { font-size: 11px; font-weight: 600; color: var(--ink2); text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-bottom: 6px; }
   .secret-inp {
     width: 100%; height: 36px; font-size: 13px;
     border: 1px solid var(--bdr2); border-radius: var(--r-sm);
-    background: var(--surf2); color: var(--ink);
-    padding: 0 10px; outline: none;
+    background: var(--surf2); color: var(--ink); padding: 0 10px; outline: none;
   }
   .secret-inp:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(26,158,110,0.12); }
   .save-btn {
@@ -201,17 +179,14 @@
   tr:hover td { background: #fafafa; }
   .tkr { font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; }
   .co-name { font-size: 12px; color: var(--ink2); max-width: 170px; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .mcap-val { font-size: 12px; color: var(--ink2); font-variant-numeric: tabular-nums; }
 
   /* rating badges */
   .rbadge { display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 999px; min-width: 36px; letter-spacing: 0.02em; }
-  .r9 { background: #d4edda; color: #155724; }
-  .r8 { background: #c3e6cb; color: #0d4a1c; }
-  .r7 { background: #d1ecf1; color: #0c5460; }
-  .r6 { background: #cce5ff; color: #004085; }
-  .r5 { background: #b8daff; color: #002752; }
-  .r4 { background: #e2d9f3; color: #3d1a7a; }
-  .r3 { background: #ffeeba; color: #856404; }
-  .r2 { background: #ffd98a; color: #6d4c00; }
+  .r9 { background: #d4edda; color: #155724; } .r8 { background: #c3e6cb; color: #0d4a1c; }
+  .r7 { background: #d1ecf1; color: #0c5460; } .r6 { background: #cce5ff; color: #004085; }
+  .r5 { background: #b8daff; color: #002752; } .r4 { background: #e2d9f3; color: #3d1a7a; }
+  .r3 { background: #ffeeba; color: #856404; } .r2 { background: #ffd98a; color: #6d4c00; }
   .r1 { background: #f5c6cb; color: #721c24; }
 
   /* signal badges */
@@ -254,15 +229,15 @@
     </div>
   </div>
 
-  <!-- status fetch -->
   <div class="status-banner loading" id="status-banner">
     <i class="ti ti-loader-2"></i>
     <span id="status-text">Memuat data saham...</span>
   </div>
 
-  <!-- upload panel (tersembunyi, hanya admin) -->
+  <!-- upload panel -->
   <div class="upload-panel" id="upload-panel">
-    <div class="upload-panel-title">Update Data — Upload 3 CSV</div>
+    <div class="upload-panel-title">Update Data</div>
+    <div class="upload-hint">Upload minimal 1 file. Data yang tidak diupload akan dipertahankan dari database.</div>
     <div class="upload-grid">
       <div class="ucard" id="uc-tv">
         <div class="ucard-head">
@@ -272,7 +247,7 @@
         </div>
         <div class="dz" id="dz-tv" onclick="document.getElementById('f-tv').click()">
           <i class="ti ti-table-import"></i>
-          <div class="dz-label" id="lbl-tv">Upload CSV<br>S&amp;P 500 screener</div>
+          <div class="dz-label" id="lbl-tv">Upload CSV/XLSX<br>S&amp;P 500 screener</div>
           <input type="file" id="f-tv" accept=".csv,.xls,.xlsx" onchange="loadFile('tv',this)">
         </div>
       </div>
@@ -284,7 +259,7 @@
         </div>
         <div class="dz" id="dz-mu" onclick="document.getElementById('f-mu').click()">
           <i class="ti ti-table-import"></i>
-          <div class="dz-label" id="lbl-mu">Upload CSV<br>Sharia rating</div>
+          <div class="dz-label" id="lbl-mu">Upload CSV/XLSX<br>Sharia rating</div>
           <input type="file" id="f-mu" accept=".csv,.xls,.xlsx" onchange="loadFile('mu',this)">
         </div>
       </div>
@@ -296,7 +271,7 @@
         </div>
         <div class="dz" id="dz-xt" onclick="document.getElementById('f-xt').click()">
           <i class="ti ti-table-import"></i>
-          <div class="dz-label" id="lbl-xt">Upload CSV<br>Daftar saham tersedia</div>
+          <div class="dz-label" id="lbl-xt">Upload CSV/XLSX<br>Daftar saham tersedia</div>
           <input type="file" id="f-xt" accept=".csv,.xls,.xlsx" onchange="loadFile('xt',this)">
         </div>
       </div>
@@ -351,6 +326,19 @@
     </div>
   </div>
 
+  <!-- toolbar selalu tampil setelah data ada -->
+  <div id="toolbar-wrap" style="display:none">
+    <div class="toolbar">
+      <input class="search-inp" id="srch" placeholder="Cari ticker / nama..." oninput="debounceSearch()">
+      <select class="sec-sel" id="sec-filter" onchange="renderTable()">
+        <option value="all">Semua sektor</option>
+      </select>
+      <button class="export-btn" onclick="exportCSV()">
+        <i class="ti ti-download" style="font-size:14px"></i> Export CSV
+      </button>
+    </div>
+  </div>
+
   <div id="result-wrap">
     <div class="empty">
       <i class="ti ti-loader-2"></i>
@@ -366,13 +354,20 @@ const RSCORE = {'A+':9,'A':8,'A-':7,'B+':6,'B':5,'B-':4,'C+':3,'C':2,'C-':1};
 const RCLS   = {9:'r9',8:'r8',7:'r7',6:'r6',5:'r5',4:'r4',3:'r3',2:'r2',1:'r1'};
 
 // ─── State ────────────────────────────────────────────────────────────────────
-let allStocks = [];   // data dari Firestore
-let results   = [];   // setelah filter rating
+let allStocks = [];
+let results   = [];
 let sortCol   = 'score', sortDir = -1;
-let uploadDone = {tv: false, mu: false, xt: false};
+let uploadDone = {tv:false, mu:false, xt:false};
 let UPLOAD_DATA = {tv:[], mu:[], xt:[]};
+let _searchTimer = null;
 
-// ─── Init: fetch data dari backend ───────────────────────────────────────────
+// ─── Debounce search ──────────────────────────────────────────────────────────
+function debounceSearch() {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() => renderTable(), 300);
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
 async function init() {
   try {
     const res  = await fetch('/api/data');
@@ -381,24 +376,24 @@ async function init() {
 
     allStocks = json.stocks || [];
     const updatedAt = json.updatedAt
-      ? new Date(json.updatedAt).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'})
+      ? new Date(json.updatedAt).toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})
       : null;
 
     if (!allStocks.length) {
       showStatus('ok', 'Database kosong. Silakan upload data lewat tombol Update Data.');
+      document.getElementById('result-wrap').innerHTML = '<div class="empty"><i class="ti ti-database-off"></i><p>Belum ada data. Klik Update Data untuk upload.</p></div>';
     } else {
       showStatus('ok', `${allStocks.length} saham dimuat` + (updatedAt ? ` · Diperbarui ${updatedAt}` : ''));
       document.getElementById('last-run').textContent = updatedAt ? 'Update: ' + updatedAt : '';
-      // Simpan stats dari DB untuk ditampilkan
       window._dbStats = { statTV: json.statTV||0, statHalal: json.statHalal||0, statXTB: json.statXTB||0 };
+      buildSectorOptions();
       buildStats();
       renderTable();
+      document.getElementById('toolbar-wrap').style.display = 'block';
     }
   } catch (err) {
     showStatus('error', 'Gagal memuat data: ' + err.message);
-    document.getElementById('result-wrap').innerHTML = `
-      <div class="empty"><i class="ti ti-wifi-off"></i>
-      <p>Koneksi ke database gagal.<br>Pastikan Netlify Functions sudah aktif.</p></div>`;
+    document.getElementById('result-wrap').innerHTML = '<div class="empty"><i class="ti ti-wifi-off"></i><p>Koneksi ke database gagal.<br>Pastikan Netlify Functions sudah aktif.</p></div>';
   }
 }
 
@@ -407,6 +402,14 @@ function showStatus(type, msg) {
   const ico = {loading:'ti-loader-2', ok:'ti-circle-check', error:'ti-alert-circle'};
   el.className = 'status-banner ' + type;
   el.innerHTML = `<i class="ti ${ico[type]}"></i><span>${msg}</span>`;
+}
+
+// ─── Sector dropdown (diisi sekali, tidak ikut re-render) ─────────────────────
+function buildSectorOptions() {
+  const sectors = [...new Set(allStocks.map(r=>r.sector).filter(Boolean))].sort();
+  const sel = document.getElementById('sec-filter');
+  sel.innerHTML = '<option value="all">Semua sektor</option>'
+    + sectors.map(s=>`<option value="${s}">${s}</option>`).join('');
 }
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
@@ -421,78 +424,85 @@ function buildStats() {
   document.getElementById('stats-grid').style.display = 'grid';
 }
 
+// ─── Format helpers ───────────────────────────────────────────────────────────
+function fmtP(v) {
+  return (v===0||isNaN(v)) ? '—' : '$'+Number(v).toFixed(2);
+}
+function fmtMcap(v) {
+  if (!v || isNaN(v)) return '—';
+  if (v >= 1e12) return '$'+(v/1e12).toFixed(2)+'T';
+  if (v >= 1e9)  return '$'+(v/1e9).toFixed(2)+'B';
+  if (v >= 1e6)  return '$'+(v/1e6).toFixed(2)+'M';
+  return '$'+v.toFixed(0);
+}
+// Chg% — simpan sebagai angka murni (float), format saat render
+function fmtChg(v) {
+  const n = parseFloat(v);
+  if (isNaN(n)) return '<span style="color:var(--ink3)">—</span>';
+  const sign = n > 0 ? '+' : '';
+  const cls  = n > 0 ? 'color:var(--green)' : n < 0 ? 'color:var(--red)' : 'color:var(--ink2)';
+  return `<span style="${cls};font-variant-numeric:tabular-nums">${sign}${n.toFixed(2)}%</span>`;
+}
+function sigCls(s) {
+  const sl = String(s||'').toLowerCase();
+  return sl.includes('strong buy') ? 'sig sig-sbuy' : sl==='buy' ? 'sig sig-buy' : 'sig sig-other';
+}
+function extLink(href, content) {
+  return href
+    ? `<a href="${href}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--bdr2)">${content}</a>`
+    : content;
+}
+
 // ─── Render tabel ─────────────────────────────────────────────────────────────
 function renderTable() {
   if (!allStocks.length) return;
   buildStats();
 
   const minScore = parseInt(document.getElementById('f-rating').value) || 1;
-  const q   = (document.getElementById('srch')       || {value:''}).value.toLowerCase();
+  const q   = (document.getElementById('srch') || {value:''}).value.toLowerCase().trim();
   const sec = (document.getElementById('sec-filter') || {value:'all'}).value;
 
   results = allStocks.filter(r => r.score >= minScore);
 
   let rows = results.filter(r => {
-    if (q && !r.ticker.toLowerCase().includes(q) && !r.name.toLowerCase().includes(q)) return false;
+    if (q && !r.ticker.toLowerCase().includes(q) && !(r.name||'').toLowerCase().includes(q)) return false;
     if (sec && sec !== 'all' && r.sector !== sec) return false;
     return true;
   });
 
   rows.sort((a,b) => {
-    if (sortCol === 'score')  return (a.score  - b.score)  * sortDir;
-    if (sortCol === 'ticker') return a.ticker.localeCompare(b.ticker) * sortDir;
-    if (sortCol === 'name')   return (a.name||'').localeCompare(b.name||'') * sortDir;
-    if (sortCol === 'sector') return (a.sector||'').localeCompare(b.sector||'') * sortDir;
-    if (sortCol === 'price')  { const av=isNaN(a.price)?-1:a.price, bv=isNaN(b.price)?-1:b.price; return (av-bv)*sortDir; }
-    if (sortCol === 'chg')    {
-      const av=parseFloat(String(a.chg||'').replace('%','')), bv=parseFloat(String(b.chg||'').replace('%',''));
-      return ((isNaN(av)?-999:av) - (isNaN(bv)?-999:bv)) * sortDir;
+    switch(sortCol) {
+      case 'score':  return (a.score - b.score) * sortDir;
+      case 'ticker': return a.ticker.localeCompare(b.ticker) * sortDir;
+      case 'name':   return (a.name||'').localeCompare(b.name||'') * sortDir;
+      case 'sector': return (a.sector||'').localeCompare(b.sector||'') * sortDir;
+      case 'mcap':   { const av=isNaN(a.mcap)?-1:a.mcap, bv=isNaN(b.mcap)?-1:b.mcap; return (av-bv)*sortDir; }
+      case 'price':  { const av=isNaN(a.price)?-1:a.price, bv=isNaN(b.price)?-1:b.price; return (av-bv)*sortDir; }
+      case 'chg':    {
+        // chg disimpan sebagai angka float murni
+        const av = isNaN(parseFloat(a.chg)) ? -9999 : parseFloat(a.chg);
+        const bv = isNaN(parseFloat(b.chg)) ? -9999 : parseFloat(b.chg);
+        return (av-bv)*sortDir;
+      }
+      case 'signal': {
+        const order = {'Strong buy':4,'Buy':3,'Neutral':2,'Sell':1,'Strong sell':0};
+        return ((order[a.signal]??-1)-(order[b.signal]??-1))*sortDir;
+      }
+      default: return 0;
     }
-    if (sortCol === 'signal') {
-      const order = {'Strong buy':4,'Buy':3,'Neutral':2,'Sell':1,'Strong sell':0};
-      return ((order[a.signal]??-1) - (order[b.signal]??-1)) * sortDir;
-    }
-    return 0;
   });
 
-  const sectors = [...new Set(allStocks.map(r=>r.sector).filter(Boolean))].sort();
-  const secOpts = '<option value="all">Semua sektor</option>'
-    + sectors.map(s=>`<option value="${s}"${s===sec?' selected':''}>${s}</option>`).join('');
-
-  const fmtP   = v => (v===0||isNaN(v)) ? '—' : '$'+Number(v).toFixed(2);
-  const fmtChg = v => {
-    if (!v || v==='') return '<span style="color:var(--ink3)">—</span>';
-    const clean = String(v).replace(/[^0-9.+\-]/g,'');
-    const n = parseFloat(clean);
-    if (isNaN(n)) return '<span style="color:var(--ink3)">—</span>';
-    const sign = n > 0 ? '+' : '';
-    const cls  = n > 0 ? 'color:var(--green)' : n < 0 ? 'color:#c0392b' : 'color:var(--ink2)';
-    return `<span style="${cls};font-variant-numeric:tabular-nums">${sign}${n.toFixed(2)}%</span>`;
-  };
-  const sigCls = s => {
-    const sl = String(s||'').toLowerCase();
-    return sl.includes('strong') ? 'sig sig-sbuy' : sl.includes('buy') ? 'sig sig-buy' : 'sig sig-other';
-  };
-  const extLink = (href, content) => href
-    ? `<a href="${href}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--bdr2)">${content}</a>`
-    : content;
   const arr = col => col===sortCol ? (sortDir===1?' ↑':' ↓') : '';
   const th  = (col,lbl) => `<th onclick="setSort('${col}')">${lbl}${arr(col)}</th>`;
 
   const wrap = document.getElementById('result-wrap');
+
   if (!rows.length) {
-    wrap.innerHTML = '<div class="empty"><i class="ti ti-mood-empty"></i><p>Tidak ada saham yang lolos filter.</p></div>';
+    wrap.innerHTML = '<div class="empty"><i class="ti ti-mood-empty"></i><p>Tidak ada saham yang cocok.</p></div>';
     return;
   }
 
   wrap.innerHTML = `
-    <div class="toolbar">
-      <input class="search-inp" id="srch" placeholder="Cari ticker / nama..." oninput="renderTable()" value="${q}">
-      <select class="sec-sel" id="sec-filter" onchange="renderTable()">${secOpts}</select>
-      <button class="export-btn" onclick="exportCSV()">
-        <i class="ti ti-download" style="font-size:14px"></i> Export CSV
-      </button>
-    </div>
     <div class="tbl-outer">
       <div class="tbl-wrap">
         <table>
@@ -502,6 +512,7 @@ function renderTable() {
             ${th('score','Rating')}
             ${th('price','Price')}
             ${th('chg','Chg %')}
+            ${th('mcap','Market Cap')}
             ${th('signal','TV Signal')}
             ${th('sector','Sektor')}
           </tr></thead>
@@ -512,6 +523,7 @@ function renderTable() {
               <td>${extLink(r.muUrl, `<span class="rbadge ${RCLS[r.score]||''}">${r.rating}</span>`)}</td>
               <td>${fmtP(r.price)}</td>
               <td>${fmtChg(r.chg)}</td>
+              <td><span class="mcap-val">${fmtMcap(r.mcap)}</span></td>
               <td><span class="${sigCls(r.signal)}">${r.signal||'—'}</span></td>
               <td><span class="sect-pill">${r.sector||'—'}</span></td>
             </tr>`).join('')}
@@ -524,30 +536,57 @@ function renderTable() {
 
 function setSort(col) {
   if (sortCol===col) sortDir*=-1;
-  else { sortCol=col; sortDir=(col==='score'||col==='signal') ? -1 : 1; }
+  else { sortCol=col; sortDir=(col==='score'||col==='signal'||col==='mcap'||col==='chg') ? -1 : 1; }
   renderTable();
 }
 
 // ─── Upload panel ─────────────────────────────────────────────────────────────
 function toggleUpload() {
-  const panel = document.getElementById('upload-panel');
-  panel.classList.toggle('open');
+  document.getElementById('upload-panel').classList.toggle('open');
 }
 
 function checkSaveReady() {
-  const ready = uploadDone.tv && uploadDone.mu && uploadDone.xt;
-  document.getElementById('save-btn').disabled = !ready;
+  // Aktif kalau minimal 1 file sudah diupload
+  const anyDone = uploadDone.tv || uploadDone.mu || uploadDone.xt;
+  document.getElementById('save-btn').disabled = !anyDone;
 }
 
-// Parsing CSV helper
+// ─── Helper parse ─────────────────────────────────────────────────────────────
 function pNum(v) {
   if (v===null||v===undefined||v==='') return NaN;
   if (typeof v==='number') return v;
-  const s = String(v).replace(/[$,%\s]/g,'')
+  const s = String(v).replace(/[$,\s\u202f\u00a0]/g,'')
     .replace(/T$/i,'e12').replace(/B$/i,'e9')
     .replace(/M$/i,'e6').replace(/K$/i,'e3');
   return parseFloat(s);
 }
+
+// Chg% — kembalikan angka float murni (bukan string dengan %)
+// XLSX kadang konversi "+1.24%" → 0.0124 (desimal), perlu dikali 100
+function extractChg(posRaw, negRaw) {
+  // Coba kolom positif dulu, lalu negatif
+  // Tapi jangan pakai || karena 0 (falsy) adalah nilai valid
+  let raw = (posRaw !== null && posRaw !== undefined && posRaw !== '') ? posRaw : negRaw;
+  if (raw === null || raw === undefined || raw === '') return null;
+
+  if (typeof raw === 'number') {
+    // XLSX konversi persen → desimal: 1.24% jadi 0.0124
+    // Deteksi: kalau nilainya antara -1 dan 1, kemungkinan sudah dikonversi
+    if (raw >= -1 && raw <= 1 && raw !== 0) {
+      return parseFloat((raw * 100).toFixed(4));
+    }
+    return raw;
+  }
+
+  // String — bersihkan encoding rusak dan ekstrak angka
+  let s = String(raw)
+    .replace(/\u202f|\u00a0/g, '') // narrow no-break space
+    .replace(/â€¯/g, '')           // encoding rusak
+    .replace(/[^\d.+\-]/g, '');    // sisakan hanya angka, titik, tanda
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
+}
+
 function normTicker(v, isXTB) {
   const s = String(v||'').trim();
   if (isXTB) {
@@ -571,9 +610,9 @@ function loadFile(src, inp) {
   const rd = new FileReader();
   rd.onload = e => {
     try {
-      const wb   = XLSX.read(e.target.result, {type:'binary'});
+      const wb   = XLSX.read(e.target.result, {type:'binary', cellDates:true});
       const ws   = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws, {defval:''});
+      const json = XLSX.utils.sheet_to_json(ws, {defval:'', raw:true});
       if (!json.length) { alert('File kosong.'); return; }
       UPLOAD_DATA[src] = json;
       uploadDone[src]  = true;
@@ -586,7 +625,14 @@ function loadFile(src, inp) {
   rd.readAsBinaryString(f);
 }
 
-// Proses dan kirim ke backend
+// ─── Parse TV URL → superchart ────────────────────────────────────────────────
+function tvUrlToSuperchart(url) {
+  const m = String(url||'').match(/\/symbols\/([A-Z0-9]+)-([A-Z0-9.]+)\/?$/i);
+  if (!m) return '';
+  return `https://www.tradingview.com/chart/?symbol=${m[1]}%3A${m[2]}`;
+}
+
+// ─── Save data ke backend ─────────────────────────────────────────────────────
 async function saveData() {
   const secret = document.getElementById('secret-inp').value.trim();
   if (!secret) { alert('Masukkan secret key dulu.'); return; }
@@ -597,16 +643,25 @@ async function saveData() {
   label.textContent = 'Memproses...';
 
   try {
-    // Merge CSV sama seperti sebelumnya
-    const tvCols = Object.keys(UPLOAD_DATA.tv[0]);
-    const muCols = Object.keys(UPLOAD_DATA.mu[0]);
-    const xtCols = Object.keys(UPLOAD_DATA.xt[0]);
+    // Fetch data existing dari DB sebagai base
+    label.textContent = 'Mengambil data existing...';
+    const dbRes  = await fetch('/api/data');
+    const dbJson = await dbRes.json();
+    // Buat map dari data existing: ticker → stock object
+    const existingMap = {};
+    (dbJson.stocks || []).forEach(s => { existingMap[s.ticker] = s; });
+
+    // Tentukan kolom dari file yang diupload
+    const tvCols = uploadDone.tv ? Object.keys(UPLOAD_DATA.tv[0]) : [];
+    const muCols = uploadDone.mu ? Object.keys(UPLOAD_DATA.mu[0]) : [];
+    const xtCols = uploadDone.xt ? Object.keys(UPLOAD_DATA.xt[0]) : [];
 
     const C = {
       tvTicker: tvCols.find(c=>c==='apply-common-tooltip') || findCol(tvCols,['symbol','ticker']),
       tvName:   tvCols.find(c=>c==='apply-common-tooltip 2') || findCol(tvCols,['name','company']),
       tvUrl:    tvCols.find(c=>c==='apply-common-tooltip href') || findCol(tvCols,['href','url','link']),
       tvPrice:  tvCols.find(c=>c==='cell-l8ssHf_S 2') || findCol(tvCols,['price','close','last']),
+      tvMcap:   tvCols.find(c=>c==='cell-l8ssHf_S') || findCol(tvCols,['market cap','mcap']),
       tvChgPos: tvCols.find(c=>c==='positive-cMYWjVQg') || findCol(tvCols,['positive']),
       tvChgNeg: tvCols.find(c=>c==='negative-cMYWjVQg') || findCol(tvCols,['negative']),
       tvSignal: tvCols.find(c=>c==='container-H4XKO6Sa') || findCol(tvCols,['signal','recommend']),
@@ -619,72 +674,97 @@ async function saveData() {
       xtName:   findCol(xtCols,['xs-display-name','xs-display','display-name']),
     };
 
+    // Build lookup maps dari file yang diupload
     const muMap = {};
-    UPLOAD_DATA.mu.forEach(r => {
-      const t  = normTicker(r[C.muTicker], false);
-      const rt = normRating(r[C.muRating]);
-      if (t && RSCORE[rt] !== undefined)
-        muMap[t] = { rating:rt, score:RSCORE[rt], sector:r[C.muSector]||'', name:r[C.muName]||'', muUrl:r[C.muUrl]||'' };
-    });
-
-    const xtSet = new Set(), xtNameMap = {};
-    UPLOAD_DATA.xt.forEach(r => {
-      const t = normTicker(r[C.xtTicker], true);
-      if (t) { xtSet.add(t); xtNameMap[t] = r[C.xtName]||''; }
-    });
-
-    // Parse TV URL → superchart URL
-    // Dari: https://www.tradingview.com/symbols/NASDAQ-AMD/
-    // Ke:   https://www.tradingview.com/chart/?symbol=NASDAQ%3AAMD
-    function tvUrlToSuperchart(url) {
-      const m = String(url||'').match(/\/symbols\/([A-Z0-9]+)-([A-Z0-9.]+)\/?$/i);
-      if (!m) return '';
-      return `https://www.tradingview.com/chart/?symbol=${m[1]}%3A${m[2]}`;
+    if (uploadDone.mu) {
+      UPLOAD_DATA.mu.forEach(r => {
+        const t  = normTicker(r[C.muTicker], false);
+        const rt = normRating(r[C.muRating]);
+        if (t && RSCORE[rt] !== undefined)
+          muMap[t] = { rating:rt, score:RSCORE[rt], sector:r[C.muSector]||'', name:r[C.muName]||'', muUrl:r[C.muUrl]||'' };
+      });
     }
 
-    const stocks = [];
-    UPLOAD_DATA.tv.forEach(r => {
-      const ticker = normTicker(r[C.tvTicker], false); if (!ticker) return;
-      const price  = pNum(r[C.tvPrice]);
-      const signal = String(r[C.tvSignal]||'');
-      // Chg%: XLSX kadang konversi "+1.24%" jadi angka 0.0124, perlu dibalik
-      function extractChg(raw) {
-        if (raw === null || raw === undefined || raw === '') return '';
-        if (typeof raw === 'number') {
-          // XLSX konversi persen → desimal, kalikan 100 balik
-          return (raw * 100).toFixed(2) + '%';
-        }
-        // Perbaiki encoding rusak: karakter â atau − diganti -
-        return String(raw).replace(/^[^\d+\-.]*/,'').replace(/â|−|–/g,'-') || '';
-      }
-      const chgRaw = r[C.tvChgPos] || r[C.tvChgNeg] || '';
-      const chg = extractChg(chgRaw);
-      const tvUrl  = tvUrlToSuperchart(r[C.tvUrl]);
-      const mu     = muMap[ticker];
-      if (!mu || !xtSet.has(ticker)) return;
-      stocks.push({
-        ticker, price: isNaN(price) ? 0 : price, signal, chg, tvUrl,
-        rating: mu.rating, score: mu.score,
-        sector: mu.sector, muUrl: mu.muUrl,
-        name: xtNameMap[ticker] || mu.name || r[C.tvName] || '',
+    const xtSet = new Set(), xtNameMap = {};
+    if (uploadDone.xt) {
+      UPLOAD_DATA.xt.forEach(r => {
+        const t = normTicker(r[C.xtTicker], true);
+        if (t) { xtSet.add(t); xtNameMap[t] = r[C.xtName]||''; }
       });
+    }
+
+    // Build TV map
+    const tvMap = {};
+    if (uploadDone.tv) {
+      UPLOAD_DATA.tv.forEach(r => {
+        const ticker = normTicker(r[C.tvTicker], false); if (!ticker) return;
+        const chg = extractChg(r[C.tvChgPos], r[C.tvChgNeg]);
+        tvMap[ticker] = {
+          price:  pNum(r[C.tvPrice]),
+          mcap:   pNum(r[C.tvMcap]),
+          signal: String(r[C.tvSignal]||''),
+          chg:    chg,
+          tvUrl:  tvUrlToSuperchart(r[C.tvUrl]),
+          name:   String(r[C.tvName]||''),
+        };
+      });
+    }
+
+    // Tentukan universe ticker: kalau TV diupload pakai TV, kalau tidak pakai existing
+    const tickers = uploadDone.tv
+      ? Object.keys(tvMap)
+      : Object.keys(existingMap);
+
+    label.textContent = 'Menggabungkan data...';
+
+    // Hitung stats
+    let statTV = dbJson.statTV || 0, _stHalal = dbJson.statHalal || 0, _stXTB = dbJson.statXTB || 0;
+    if (uploadDone.tv) statTV = Object.keys(tvMap).length;
+
+    const stocks = [];
+    tickers.forEach(ticker => {
+      const existing = existingMap[ticker] || {};
+      const tv  = tvMap[ticker] || {};
+      const mu  = uploadDone.mu ? muMap[ticker] : null;
+      const inXTB = uploadDone.xt ? xtSet.has(ticker) : (existing.inXTB !== false);
+
+      // Kalau upload partial, ambil dari existing kalau tidak ada di file baru
+      const rating  = mu ? mu.rating  : existing.rating;
+      const score   = mu ? mu.score   : existing.score;
+      const sector  = mu ? mu.sector  : existing.sector;
+      const muUrl   = mu ? mu.muUrl   : existing.muUrl;
+      const muName  = mu ? mu.name    : '';
+
+      // Kalau tidak ada rating sama sekali, skip
+      if (!rating || !RSCORE[rating]) return;
+      // Kalau tidak tersedia di XTB, skip
+      if (!inXTB) return;
+
+      const price  = uploadDone.tv ? (isNaN(tv.price) ? 0 : tv.price) : existing.price;
+      const mcap   = uploadDone.tv ? (isNaN(tv.mcap)  ? 0 : tv.mcap)  : existing.mcap;
+      const signal = uploadDone.tv ? tv.signal  : existing.signal;
+      const chg    = uploadDone.tv ? tv.chg     : existing.chg;
+      const tvUrl  = uploadDone.tv ? tv.tvUrl   : existing.tvUrl;
+      const name   = uploadDone.xt ? (xtNameMap[ticker]||muName||existing.name||tv.name||'')
+                   : (existing.name || muName || tv.name || '');
+
+      stocks.push({ ticker, price, mcap, signal, chg, tvUrl, rating, score, sector, muUrl, name, inXTB: true });
     });
 
-    // Hitung stats sebelum filter merge
-    const statTV    = UPLOAD_DATA.tv.length;
-    const statHalal = Object.keys(muMap).filter(t => xtSet.has(t) ? false : muMap[t]).length
-                    + stocks.length; // aproximasi: semua di muMap yang match TV
-    // Hitung ulang dengan benar
-    let _stHalal = 0, _stXTB = 0;
-    UPLOAD_DATA.tv.forEach(r => {
-      const ticker = normTicker(r[C.tvTicker], false); if (!ticker) return;
-      const mu = muMap[ticker];
-      if (mu) _stHalal++;
-      if (mu && xtSet.has(ticker)) _stXTB++;
-    });
+    // Hitung ulang stats kalau ada upload baru
+    if (uploadDone.mu || uploadDone.tv) {
+      _stHalal = 0; _stXTB = 0;
+      tickers.forEach(ticker => {
+        const mu = uploadDone.mu ? muMap[ticker] : existingMap[ticker];
+        if (!mu) return;
+        _stHalal++;
+        const inX = uploadDone.xt ? xtSet.has(ticker) : (existingMap[ticker]?.inXTB !== false);
+        if (inX) _stXTB++;
+      });
+    }
 
     if (!stocks.length) {
-      alert('Tidak ada saham yang lolos filter setelah merge. Cek kolom CSV di console (F12).');
+      alert('Tidak ada saham yang lolos setelah merge. Cek console (F12) untuk debug.');
       btn.disabled = false; label.textContent = 'Simpan ke Database';
       return;
     }
@@ -699,12 +779,13 @@ async function saveData() {
     const json = await res.json();
     if (!res.ok) throw new Error(json.error || 'Upload gagal');
 
-    // Reload data
     allStocks = stocks;
     window._dbStats = { statTV, statHalal: _stHalal, statXTB: _stXTB };
     showStatus('ok', `${stocks.length} saham berhasil disimpan · ${new Date().toLocaleTimeString('id-ID')}`);
+    buildSectorOptions();
     buildStats();
     renderTable();
+    document.getElementById('toolbar-wrap').style.display = 'block';
     document.getElementById('upload-panel').classList.remove('open');
     label.textContent = 'Simpan ke Database';
 
@@ -712,20 +793,21 @@ async function saveData() {
     alert('Error: ' + err.message);
     label.textContent = 'Simpan ke Database';
   } finally {
-    btn.disabled = !(uploadDone.tv && uploadDone.mu && uploadDone.xt);
+    btn.disabled = !(uploadDone.tv || uploadDone.mu || uploadDone.xt);
   }
 }
 
 // ─── Export CSV ───────────────────────────────────────────────────────────────
 function exportCSV() {
   if (!results.length) return;
-  const hdr  = ['Ticker','Nama','Rating','Skor','Price','Chg %','TV Signal','Sektor','TradingView','Musaffa'];
+  const hdr  = ['Ticker','Nama','Rating','Skor','Price','Chg %','Market Cap','TV Signal','Sektor','TradingView','Musaffa'];
   const rows = results.map(r=>[
     r.ticker, r.name, r.rating, r.score,
     r.price ? Number(r.price).toFixed(2) : '',
-    r.chg || '',
+    r.chg !== null && r.chg !== undefined ? Number(r.chg).toFixed(2)+'%' : '',
+    r.mcap ? Number(r.mcap).toFixed(0) : '',
     r.signal, r.sector,
-    r.tvUrl || '', r.muUrl || ''
+    r.tvUrl||'', r.muUrl||''
   ]);
   const csv = [hdr,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a   = document.createElement('a');
