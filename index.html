@@ -555,7 +555,8 @@ function checkSaveReady() {
 function pNum(v) {
   if (v===null||v===undefined||v==='') return NaN;
   if (typeof v==='number') return v;
-  const s = String(v).replace(/[$,\s\u202f\u00a0]/g,'')
+  const s = String(v)
+    .replace(/[$,\s\u202f\u00a0]/g,'')  // hapus spasi termasuk narrow no-break space
     .replace(/T$/i,'e12').replace(/B$/i,'e9')
     .replace(/M$/i,'e6').replace(/K$/i,'e3');
   return parseFloat(s);
@@ -564,25 +565,21 @@ function pNum(v) {
 // Chg% — kembalikan angka float murni (bukan string dengan %)
 // XLSX kadang konversi "+1.24%" → 0.0124 (desimal), perlu dikali 100
 function extractChg(posRaw, negRaw) {
-  // Coba kolom positif dulu, lalu negatif
-  // Tapi jangan pakai || karena 0 (falsy) adalah nilai valid
   let raw = (posRaw !== null && posRaw !== undefined && posRaw !== '') ? posRaw : negRaw;
   if (raw === null || raw === undefined || raw === '') return null;
 
   if (typeof raw === 'number') {
-    // XLSX konversi persen → desimal: 1.24% jadi 0.0124
-    // Deteksi: kalau nilainya antara -1 dan 1, kemungkinan sudah dikonversi
-    if (raw >= -1 && raw <= 1 && raw !== 0) {
-      return parseFloat((raw * 100).toFixed(4));
-    }
+    // XLSX konversi persen → desimal: deteksi dari range -1..1
+    if (raw !== 0 && raw >= -1 && raw <= 1) return parseFloat((raw * 100).toFixed(4));
     return raw;
   }
 
-  // String — bersihkan encoding rusak dan ekstrak angka
+  // String: bersihkan encoding rusak dan unicode minus (−, –) → ASCII minus
   let s = String(raw)
-    .replace(/\u202f|\u00a0/g, '') // narrow no-break space
-    .replace(/â€¯/g, '')           // encoding rusak
-    .replace(/[^\d.+\-]/g, '');    // sisakan hanya angka, titik, tanda
+    .replace(/\u202f|\u00a0/g, '')
+    .replace(/â€¯/g, '')
+    .replace(/\u2212|\u2013|\u2014/g, '-')  // unicode minus/en-dash/em-dash → -
+    .replace(/[^\d.+\-]/g, '');
   const n = parseFloat(s);
   return isNaN(n) ? null : n;
 }
@@ -657,11 +654,13 @@ async function saveData() {
     const xtCols = uploadDone.xt ? Object.keys(UPLOAD_DATA.xt[0]) : [];
 
     const C = {
+      // TradingView kolom baru: price=cell-l8ssHf_S, chg=positive/negative, vol=cell-l8ssHf_S 2,
+      // relVol=cell-l8ssHf_S 3, mcap=cell-l8ssHf_S 4, sector=link-NzVCbt9o, signal=container-H4XKO6Sa
       tvTicker: tvCols.find(c=>c==='apply-common-tooltip') || findCol(tvCols,['symbol','ticker']),
       tvName:   tvCols.find(c=>c==='apply-common-tooltip 2') || findCol(tvCols,['name','company']),
       tvUrl:    tvCols.find(c=>c==='apply-common-tooltip href') || findCol(tvCols,['href','url','link']),
-      tvPrice:  tvCols.find(c=>c==='cell-l8ssHf_S 2') || findCol(tvCols,['price','close','last']),
-      tvMcap:   tvCols.find(c=>c==='cell-l8ssHf_S') || findCol(tvCols,['market cap','mcap']),
+      tvPrice:  tvCols.find(c=>c==='cell-l8ssHf_S') || findCol(tvCols,['price','close','last']),
+      tvMcap:   tvCols.find(c=>c==='cell-l8ssHf_S 4') || tvCols.find(c=>c==='cell-l8ssHf_S 2') || findCol(tvCols,['market cap','mcap']),
       tvChgPos: tvCols.find(c=>c==='positive-cMYWjVQg') || findCol(tvCols,['positive']),
       tvChgNeg: tvCols.find(c=>c==='negative-cMYWjVQg') || findCol(tvCols,['negative']),
       tvSignal: tvCols.find(c=>c==='container-H4XKO6Sa') || findCol(tvCols,['signal','recommend']),
@@ -673,6 +672,8 @@ async function saveData() {
       xtTicker: findCol(xtCols,['xs-logo src','xs-logo','logo src']),
       xtName:   findCol(xtCols,['xs-display-name','xs-display','display-name']),
     };
+    console.log('Kolom TV terdeteksi:', {price:C.tvPrice, mcap:C.tvMcap, chgPos:C.tvChgPos, chgNeg:C.tvChgNeg, signal:C.tvSignal});
+    console.log('Sampel baris TV[0]:', UPLOAD_DATA.tv[0]);
 
     // Build lookup maps dari file yang diupload
     const muMap = {};
