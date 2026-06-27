@@ -48,6 +48,9 @@ exports.handler = async (event) => {
               price:  { doubleValue:  Number(s.price)  || 0 },
               signal: { stringValue: String(s.signal || '') },
               sector: { stringValue: String(s.sector || '') },
+              chg:    { stringValue: String(s.chg    || '') },
+              tvUrl:  { stringValue: String(s.tvUrl  || '') },
+              muUrl:  { stringValue: String(s.muUrl  || '') },
             }
           }
         }))
