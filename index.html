@@ -444,6 +444,10 @@ function renderTable() {
     if (sortCol === 'name')   return (a.name||'').localeCompare(b.name||'') * sortDir;
     if (sortCol === 'sector') return (a.sector||'').localeCompare(b.sector||'') * sortDir;
     if (sortCol === 'price')  { const av=isNaN(a.price)?-1:a.price, bv=isNaN(b.price)?-1:b.price; return (av-bv)*sortDir; }
+    if (sortCol === 'chg')    {
+      const av=parseFloat(String(a.chg||'').replace('%','')), bv=parseFloat(String(b.chg||'').replace('%',''));
+      return ((isNaN(av)?-999:av) - (isNaN(bv)?-999:bv)) * sortDir;
+    }
     if (sortCol === 'signal') {
       const order = {'Strong buy':4,'Buy':3,'Neutral':2,'Sell':1,'Strong sell':0};
       return ((order[a.signal]??-1) - (order[b.signal]??-1)) * sortDir;
@@ -456,10 +460,19 @@ function renderTable() {
     + sectors.map(s=>`<option value="${s}"${s===sec?' selected':''}>${s}</option>`).join('');
 
   const fmtP   = v => (v===0||isNaN(v)) ? '—' : '$'+Number(v).toFixed(2);
+  const fmtChg = v => {
+    if (!v || v==='') return '<span style="color:var(--ink3)">—</span>';
+    const n = parseFloat(String(v).replace('%',''));
+    const cls = isNaN(n) ? '' : n > 0 ? 'color:var(--green)' : n < 0 ? 'color:#c0392b' : 'color:var(--ink2)';
+    return `<span style="${cls};font-variant-numeric:tabular-nums">${v}</span>`;
+  };
   const sigCls = s => {
     const sl = String(s||'').toLowerCase();
     return sl.includes('strong') ? 'sig sig-sbuy' : sl.includes('buy') ? 'sig sig-buy' : 'sig sig-other';
   };
+  const extLink = (href, content) => href
+    ? `<a href="${href}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--bdr2)">${content}</a>`
+    : content;
   const arr = col => col===sortCol ? (sortDir===1?' ↑':' ↓') : '';
   const th  = (col,lbl) => `<th onclick="setSort('${col}')">${lbl}${arr(col)}</th>`;
 
@@ -485,15 +498,17 @@ function renderTable() {
             ${th('name','Nama')}
             ${th('score','Rating')}
             ${th('price','Price')}
+            ${th('chg','Chg %')}
             ${th('signal','TV Signal')}
             ${th('sector','Sektor')}
           </tr></thead>
           <tbody>
             ${rows.map(r=>`<tr>
-              <td><span class="tkr">${r.ticker}</span></td>
-              <td><span class="co-name">${r.name||'—'}</span></td>
-              <td><span class="rbadge ${RCLS[r.score]||''}">${r.rating}</span></td>
+              <td><span class="tkr">${extLink(r.tvUrl, r.ticker)}</span></td>
+              <td><span class="co-name">${extLink(r.tvUrl, r.name||'—')}</span></td>
+              <td>${extLink(r.muUrl, `<span class="rbadge ${RCLS[r.score]||''}">${r.rating}</span>`)}</td>
               <td>${fmtP(r.price)}</td>
+              <td>${fmtChg(r.chg)}</td>
               <td><span class="${sigCls(r.signal)}">${r.signal||'—'}</span></td>
               <td><span class="sect-pill">${r.sector||'—'}</span></td>
             </tr>`).join('')}
@@ -587,11 +602,15 @@ async function saveData() {
     const C = {
       tvTicker: tvCols.find(c=>c==='apply-common-tooltip') || findCol(tvCols,['symbol','ticker']),
       tvName:   tvCols.find(c=>c==='apply-common-tooltip 2') || findCol(tvCols,['name','company']),
+      tvUrl:    tvCols.find(c=>c==='apply-common-tooltip href') || findCol(tvCols,['href','url','link']),
       tvPrice:  tvCols.find(c=>c==='cell-l8ssHf_S 2') || findCol(tvCols,['price','close','last']),
+      tvChgPos: tvCols.find(c=>c==='positive-cMYWjVQg') || findCol(tvCols,['positive']),
+      tvChgNeg: tvCols.find(c=>c==='negative-cMYWjVQg') || findCol(tvCols,['negative']),
       tvSignal: tvCols.find(c=>c==='container-H4XKO6Sa') || findCol(tvCols,['signal','recommend']),
       muTicker: findCol(muCols,['line-clamp-1','line-clamp']),
       muRating: findCol(muCols,['status_grade','grade','rating']),
       muName:   findCol(muCols,['mb-0','name','company']),
+      muUrl:    findCol(muCols,['company-info href','href','url']),
       muSector: findCol(muCols,['text-nowrap 2','text-nowrap']),
       xtTicker: findCol(xtCols,['xs-logo src','xs-logo','logo src']),
       xtName:   findCol(xtCols,['xs-display-name','xs-display','display-name']),
@@ -602,7 +621,7 @@ async function saveData() {
       const t  = normTicker(r[C.muTicker], false);
       const rt = normRating(r[C.muRating]);
       if (t && RSCORE[rt] !== undefined)
-        muMap[t] = { rating:rt, score:RSCORE[rt], sector:r[C.muSector]||'', name:r[C.muName]||'' };
+        muMap[t] = { rating:rt, score:RSCORE[rt], sector:r[C.muSector]||'', name:r[C.muName]||'', muUrl:r[C.muUrl]||'' };
     });
 
     const xtSet = new Set(), xtNameMap = {};
@@ -611,17 +630,28 @@ async function saveData() {
       if (t) { xtSet.add(t); xtNameMap[t] = r[C.xtName]||''; }
     });
 
+    // Parse TV URL → superchart URL
+    // Dari: https://www.tradingview.com/symbols/NASDAQ-AMD/
+    // Ke:   https://www.tradingview.com/chart/?symbol=NASDAQ%3AAMD
+    function tvUrlToSuperchart(url) {
+      const m = String(url||'').match(/\/symbols\/([A-Z0-9]+)-([A-Z0-9.]+)\/?$/i);
+      if (!m) return '';
+      return `https://www.tradingview.com/chart/?symbol=${m[1]}%3A${m[2]}`;
+    }
+
     const stocks = [];
     UPLOAD_DATA.tv.forEach(r => {
       const ticker = normTicker(r[C.tvTicker], false); if (!ticker) return;
       const price  = pNum(r[C.tvPrice]);
       const signal = String(r[C.tvSignal]||'');
+      const chg    = String(r[C.tvChgPos]||'').trim() || String(r[C.tvChgNeg]||'').trim() || '';
+      const tvUrl  = tvUrlToSuperchart(r[C.tvUrl]);
       const mu     = muMap[ticker];
       if (!mu || !xtSet.has(ticker)) return;
       stocks.push({
-        ticker, price: isNaN(price) ? 0 : price, signal,
+        ticker, price: isNaN(price) ? 0 : price, signal, chg, tvUrl,
         rating: mu.rating, score: mu.score,
-        sector: mu.sector,
+        sector: mu.sector, muUrl: mu.muUrl,
         name: xtNameMap[ticker] || mu.name || r[C.tvName] || '',
       });
     });
@@ -675,11 +705,13 @@ async function saveData() {
 // ─── Export CSV ───────────────────────────────────────────────────────────────
 function exportCSV() {
   if (!results.length) return;
-  const hdr  = ['Ticker','Nama','Rating','Skor','Price','TV Signal','Sektor'];
+  const hdr  = ['Ticker','Nama','Rating','Skor','Price','Chg %','TV Signal','Sektor','TradingView','Musaffa'];
   const rows = results.map(r=>[
     r.ticker, r.name, r.rating, r.score,
     r.price ? Number(r.price).toFixed(2) : '',
-    r.signal, r.sector
+    r.chg || '',
+    r.signal, r.sector,
+    r.tvUrl || '', r.muUrl || ''
   ]);
   const csv = [hdr,...rows].map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
   const a   = document.createElement('a');
