@@ -1,36 +1,23 @@
-// netlify/functions/upload.js
-// POST /api/upload — simpan data saham ke Firestore (butuh UPLOAD_SECRET)
-
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type, x-upload-secret',
     'Content-Type': 'application/json',
   };
-
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers, body: '' };
-  }
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers, body: '' };
+  if (event.httpMethod !== 'POST') return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
 
   const secret = event.headers['x-upload-secret'] || '';
-  if (!secret || secret !== process.env.UPLOAD_SECRET) {
+  if (!secret || secret !== process.env.UPLOAD_SECRET)
     return { statusCode: 401, headers, body: JSON.stringify({ error: 'Unauthorized: secret key salah' }) };
-  }
 
   let body;
-  try {
-    body = JSON.parse(event.body);
-  } catch {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Body bukan JSON valid' }) };
-  }
+  try { body = JSON.parse(event.body); }
+  catch { return { statusCode: 400, headers, body: JSON.stringify({ error: 'Body bukan JSON valid' }) }; }
 
   const { stocks, statTV, statHalal, statXTB } = body;
-  if (!Array.isArray(stocks) || stocks.length === 0) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Field stocks kosong atau bukan array' }) };
-  }
+  if (!Array.isArray(stocks) || stocks.length === 0)
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Field stocks kosong' }) };
 
   try {
     const projectId = process.env.FIREBASE_PROJECT_ID;
@@ -46,11 +33,16 @@ exports.handler = async (event) => {
               rating: { stringValue: String(s.rating || '') },
               score:  { integerValue: String(Number(s.score) || 0) },
               price:  { doubleValue:  Number(s.price)  || 0 },
+              mcap:   { doubleValue:  Number(s.mcap)   || 0 },
               signal: { stringValue: String(s.signal || '') },
               sector: { stringValue: String(s.sector || '') },
-              chg:    { stringValue: String(s.chg    || '') },
+              // chg disimpan sebagai angka float (null → 0, pakai NaN check di client)
+              chg:    s.chg !== null && s.chg !== undefined && !isNaN(s.chg)
+                        ? { doubleValue: Number(s.chg) }
+                        : { nullValue: 'NULL_VALUE' },
               tvUrl:  { stringValue: String(s.tvUrl  || '') },
               muUrl:  { stringValue: String(s.muUrl  || '') },
+              inXTB:  { booleanValue: s.inXTB !== false },
             }
           }
         }))
@@ -70,22 +62,13 @@ exports.handler = async (event) => {
 
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/stocks/latest?key=${apiKey}`;
     const res = await fetch(url, {
-      method:  'PATCH',
+      method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(doc),
+      body: JSON.stringify(doc),
     });
+    if (!res.ok) { const err = await res.text(); throw new Error(`Firestore error ${res.status}: ${err}`); }
 
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(`Firestore error ${res.status}: ${err}`);
-    }
-
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ ok: true, count: stocks.length, updatedAt: new Date().toISOString() }),
-    };
-
+    return { statusCode: 200, headers, body: JSON.stringify({ ok: true, count: stocks.length }) };
   } catch (err) {
     console.error('POST /api/upload error:', err);
     return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
